@@ -1,7 +1,7 @@
 #Импортируем библиотеку json 
 import json
 
-#Имя файла
+#имя файла
 file = 'stars.json'
 
 #Создаём список с данными о звёздах
@@ -12,31 +12,32 @@ data_about_stars_1 = [
     {"id": 4, "name": "Вега", "constellation": "Лира", "is_visible": True, "radius": 2.13},
     {"id": 5, "name": "Полиус", "constellation": "Центавр", "is_visible": False, "radius": 1.3}
 ]
-#Открываем json файл
+#Открываем файл и сохраняем в json
 with open(file, 'w') as f:
-    json.dump(data_about_stars_1, f) 
+    json.dump(data_about_stars_1, f)
 
-#Создаём переменную кол-ва операций
+#Переменная дла подсчёта кол-ва операций
 count_of_operations = 0
 
-#Отображение звёзд
+#отображение звёзд
 def display_all_stars():
-    #Открываем файл и загружаем данные
+    #Открываем файл
     with open(file, 'r') as f:
+        #Загружаем данные о звёздах
         stars = json.load(f)
         print("\nВсе записи:")
         #Перебор объектов и запись в json
         for star in stars:
             print(json.dumps(star, ensure_ascii = False, indent = 4))
 
-#Поиск по ID
+#поиск по ID
 def find_star_by_id(ID):
-    #Открываем файл и загружаем данные
+    #Открываем файл для чтения
     with open(file, 'r') as f:
+        #Загружаем данные о звёздах
         stars = json.load(f)
-        #Поиск по ID
+        #Перебор списка звёзд для поиска необходимой (по ID) + проверки и вывод
         for index, star in enumerate(stars):
-            #Если star[id] = ID или не равен
             if star['id'] == ID:
                 print(f"\nЗапись найдена (позиция {index + 1}):")
                 print(json.dumps(star, ensure_ascii = False, indent = 4))
@@ -44,20 +45,19 @@ def find_star_by_id(ID):
         print("Запись не найдена.")
         return False
 
-#Добавление звезды
+#Добавление новой звезды
 def add_star():
-    #Словарь для звезды
+    #Создаем пустой словарь для новой звезды
     new_star = {}
     
     while True:
         try:
-            #Ввод с проверкой
+            #Ввод данных
             new_star['id'] = int(input("Введите ID записи: "))
             break
         except ValueError:
-            print("неверный ID")
+            print("Пожалуйста, введите корректный числовой ID.")
     
-    #Ввод данных с проверками
     new_star['name'] = input("Введите название звезды: ")
     new_star['constellation'] = input("Введите название созвездия: ")
     
@@ -67,41 +67,40 @@ def add_star():
             new_star['is_visible'] = is_visible_input == 'True'
             break
         else:
-            print("Введите true / false.")
+            print("Пожалуйста, введите 'True' или 'False'.")
     
     while True:
         try:
             new_star['radius'] = float(input("Введите солнечный радиус звезды: "))
             break
         except ValueError:
-            print("Некорректный радиус.")
+            print("Пожалуйста, введите корректное число для радиуса.")
     
-    #Открываем файл и загружаем данные + проверки
+    #Открываем файл и загружаем текущие данные
     with open(file, 'r') as f:
         stars = json.load(f)
     
     if any(star['id'] == new_star['id'] for star in stars):
-        print("Запись с этим ID уже существует.")
+        print("Запись с таким ID уже существует.")
         return
     
-    #Добавляем звезду в список
+    #Добавляем новую звезду в список
     stars.append(new_star)
 
-    #Открываем файл и сохраняем список
+    #Открываем файл и сохраняем текущий список
     with open(file, 'w') as f:
         json.dump(stars, f)
-
     print("Запись добавлена.")
 
-#Удаление звезды по ID
+#Удаление по ID
 def remove_star(ID_remove):
-    #Открываем файл и сохраняем данные
+    #Открываем файл и загружаем данные
     with open(file, 'r') as f:
         stars = json.load(f)
     
-    #отслеживание успешного выполнения поиска
+    #если звезда найдена found = true
     found = False
-    #поиск по ID с проверками и соотв. действиями
+    #перебор списка звёзд по ID с целью поиска необходимой
     for index, star in enumerate(stars):
         if star['id'] == ID_remove:
             del stars[index]
@@ -109,14 +108,14 @@ def remove_star(ID_remove):
             break
 
     if found:
-        #Открываем файл и сохраняем список + проверки
+        #Открываем файл и сохраняем список
         with open(file, 'w') as f:
             json.dump(stars, f)
         print("Запись удалена.")
     else:
         print("Запись не найдена.")
 
-#Цикл, работающий до выхода из программы
+#Основной цикл
 while True:
     #Меню
     print("\nМеню:")
@@ -126,12 +125,12 @@ while True:
     print("4. Удалить запись по ID")
     print("5. Выйти из программы")
 
-    #выбор опции
+    #Выбор опции
     user_choice = input("Выберите пункт меню: ")
 
     #Если 1
     if user_choice == '1':
-        #Отображение списка звёзд
+        #Вывод всех звёзд
         display_all_stars()
         #Счётчик операций увеличивается на 1
         count_of_operations += 1
@@ -140,14 +139,15 @@ while True:
     elif user_choice == '2':
         while True:
             try:
-                #Ввод ID и поиск по ID + проверка
+                #Ввод ID
                 ID = int(input("Введите ID записи для поиска: "))
+                #Поиск по ID
                 find_star_by_id(ID)
                 #Счётчик операций увеличивается на 1
                 count_of_operations += 1
                 break  
             except ValueError:
-                print("Пожалуйста, введите корректный числовой ID.")
+                print("неверный ID")
 
     #Если 3
     elif user_choice == '3':
@@ -160,20 +160,21 @@ while True:
     elif user_choice == '4':
         while True:
             try:
-                #Ввод Id для удаления + проверка
+                #Ввод ID
                 ID_remove = int(input("Введите ID записи для удаления: "))
+                #Удаление по ID
                 remove_star(ID_remove)
                 #Счётчик операций увеличивается на 1
                 count_of_operations += 1
                 break  
             except ValueError:
-                print("Пожалуйста, введите корректный числовой ID.")
+                print("неверный ID")
 
     #Если 5
     elif user_choice == '5':
-        #Вывод
+        #Ввод кол-ва операций
         print(f"Количество выполненных операций: {count_of_operations}")
         #Выход
         break  
     else:
-        print("Необходимо ввести от 1 до 5 пункта")
+        print("Неверное значение")
